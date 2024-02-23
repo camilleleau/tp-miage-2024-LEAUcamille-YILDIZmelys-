@@ -12,11 +12,10 @@ import com.acme.todolist.application.port.out.UpdateTodoItem;
 import com.acme.todolist.domain.TodoItem;
 
 /**
- * Implémentation JPA des port out de persistence
- * 
- * @author bflorat
- *
- */
+
+ Implémentation JPA des port out de persistence
+ @author bflorat
+ **/
 @Component
 public class TodoItemPersistenceAdapter implements LoadTodoItem,UpdateTodoItem {
 
@@ -37,6 +36,10 @@ public class TodoItemPersistenceAdapter implements LoadTodoItem,UpdateTodoItem {
 				.map(todoItemJpaEntory -> mapper.mapToTodoItem(todoItemJpaEntory)).collect(Collectors.toList());
 	}
 
-	// A compléter
 
+	@Override
+	public void storeNewTodoItem(TodoItem item) {
+		TodoItemJpaEntity todoItem = new TodoItemJpaEntity(item.getId(), item.getTime(), item.getContent(), true);
+		this.todoItemRepository.save(todoItem);
+	}
 }

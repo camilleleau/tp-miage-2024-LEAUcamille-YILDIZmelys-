@@ -53,13 +53,15 @@ TIP: [Rappel Git] Trois dépôts sont ici utilisés : le dépot Github de l'ense
 
 *Le code est-il structuré en couches ? Quel problèmes ce code peut-il poser ?*
 
-#- Oui il est structuré en architecture MVC donc en structure en couche en séparant avec une partie controller, une parite vue et une partie modèle.
-- #
-
+ Oui il est structuré en architecture MVC donc en structure en couche en séparant avec une partie controller, une partie vue et une partie modèle. Oui il est structuré en architecture MVC donc en structure en couche en séparant avec une partie controller, une partievue et une partie modèle. Les prèmes que cela peut engendrer sont , la connection entres les couches qui doivent etre respecter, la scalabilité  qui peuve surcharger le controleur en cas de nombreuse fonctionnaliter et la testatbilité pour les test unitaire qui sont moins évident via le controleur.
 
 *Où se trouve le code métier (voir la règle de gestion RG 1) ?*
 
+ Le code métier, se trouve dans la méthode finalContent du contrôleur TodoListController ici present 'todolist-debut-ex1/src/main/java/com/acme/todolist/TodoListController.java'
+
 *Cette règle est-elle facilement testable par un test unitaire ?*
+
+ Cette règle n'est pas facilement testable du à la méthode finalContent qui est en privée. Elle reste certe accecible via les méthodes publiques todoItems ou createTodoItem mais il serais plus simple d'isoler cette logique dans un service dédié.
 
 * Lancer une base PostgreSQL en Docker dans un terminal (on lance ici la base en mode interactif pour visualiser son activité. Pour la lancer en tâche de fond, remplacer les options `it` par `d` comme 'daemon'):
 ```bash
@@ -67,10 +69,18 @@ docker run -it -e POSTGRES_PASSWORD=password -p 5432:5432 postgres
 ```
 *Expliquer cette ligne de commande (y compris les options utilisées)*
 
+ Cette ligne de commande permet de lancer une instance du conteneur Docker pour la base de données PostgreSQL.
+-it : Exécute le conteneur en mode interactif
+-e POSTGRES_PASSWORD=password : Définit la variable POSTGRES_PASSWORD à "password", utilisée par PostgreSQL pour le mot de passe de l'utilisateur par défaut
+-p 5432:5432 : Fait correspondre le port 5432 du conteneur avec le port 5432 de l'hôte.
+-postgres : Nom de l'image Docker à exécuter,
+
 * Compléter le code manquant dans la méthode `TodoListController.createTodoItem()`
 
 *Pourquoi `todoItemRepository` est-il `null` ? Quelle est la meilleure façon de l'injecter ?*
 
+ Ici notre todoItemRepository est null car nous avons deux constructeurs, un avec l'argument pour créer et l'autre où il n'y a pas d'argument et donc Spring n'arrive pas à injecter todoItemRepository.
+Il faudrait donc supprimer le constructeur vide (celui avec Super).
 * Modifier le code en conséquence.
 
 * Tester vos endpoints avec un client REST.
@@ -112,6 +122,11 @@ Source : http://leanpub.com/get-your-hands-dirty-on-clean-architecture[Tom Hombe
 
 *Rappeler en quelques lignes les grands principes de l'architecture hexagonale.*
 
+ L'architecture hexagonale, également appelée "Ports and Adapters", repose sur trois principes clés :
+- La séparation des préoccupations en isolant la logique métier de l'application des détails techniques extérieurs
+- L'interaction avec l'application uniquement via des ports définis (interfaces pour les fonctionnalités principales)
+- L'utilisation d'adaptateurs pour connecter ces ports à des technologies externes (comme les bases de données, les interfaces utilisateur ou les services web), permettant ainsi une flexibilité et une facilité de test accrues.
+
 Compléter ce code avec une fonctionnalité de création de `TodoItem`  persisté en base et appelé depuis un endpoint REST `POST /todos` qui :
 
 * prend un `TodoItem` au format JSON dans le body (voir exemple de contenu plus haut);
@@ -126,7 +141,9 @@ _Temps estimé : 20 mins_
 
 * Implémenter (en junit) des TU portant sur la règle de gestion qui consiste à afficher `[LATE!]` dans la description d'un item en retard de plus de 24h.
 
-*Quels types de tests devra-t-on écrire pour les adaptateurs ?* 
+*Quels types de tests devra-t-on écrire pour les adaptateurs ?*
+
+ Pour les adaptateurs nous pouvons réaliser des tests d'intégration notamment pour vérifier l'intégration avec la base de données, ou encore pour la fonctionnalité des endpoints et également des tests unitaires pour s'assurer des conversions.
 
 *S'il vous reste du temps, écrire quelques-uns de ces types de test.*
 
